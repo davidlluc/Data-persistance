@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,6 +13,7 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text ScoreText2;
     public GameObject GameOverText;
     
     private bool m_Started = false;
@@ -24,7 +27,9 @@ public class MainManager : MonoBehaviour
     {
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
-        
+        ScoreText2.text = "Best Score :"+manager.Instance.PlayerName+" :"+ manager.Instance.highscore;
+
+
         int[] pointCountArray = new [] {1,1,2,2,5,5};
         for (int i = 0; i < LineCount; ++i)
         {
@@ -71,6 +76,21 @@ public class MainManager : MonoBehaviour
     public void GameOver()
     {
         m_GameOver = true;
+        if(m_Points> manager.Instance.highscore)
+        {
+            manager.Instance.highscore = m_Points;
+            manager.Instance.PlayerName = manager.Instance.Player;
+            ScoreText2.text = "Best Score :" + manager.Instance.PlayerName + " :" + m_Points;
+        }
         GameOverText.SetActive(true);
+    }
+    public void OnDestroy()
+    {
+        manager.Instance.Savedata();
+//#if UNITY_EDITOR
+//        EditorApplication.ExitPlaymode();
+//#else
+//        Application.Quit(); // original code to quit Unity player
+//#endif
     }
 }
